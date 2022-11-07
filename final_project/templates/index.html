@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="templates/drive.css" />
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <button
+        type="button"
+        class="btn_image"
+        id="img_btn"
+        onclick="history.back()"
+      >
+        <img src="images/back1.png" width="80" height="80" />
+      </button>
+    </div>
+    <div class="title">운전자 주행</div>
+
+    <div class="text">
+      <div class="txt1">운전자 <strong>{id}님</strong>의 상태는</div>
+      <div class="txt2"><strong>{정상}</strong>입니다.</div>
+    </div>
+    <table>
+      <tr>
+        <td width="50%">
+          <img src="http://127.0.0.1:8000/facemesh" alt="" />
+        </td>
+        <td width="50%">비디오</td>
+      </tr>
+    </table>
+  </body>
+</html>

@@ -1,0 +1,105 @@
+.btn_image {
+  background-color: transparent !important;
+  border: 0;
+  position: absolute;
+  left: 45px;
+  top: 30px;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 30px;
+  font-weight: bolder;
+  margin-left: 145px;
+  margin-top: 53px;
+  color: #ff9d5c;
+}
+
+.text {
+  text-align: left;
+  margin-top: 50px;
+  margin-left: 230px;
+  font-size: 40px;
+  color: #282828;
+}
+
+.txt1 {
+  margin-left: 50px;
+}
+
+.txt2 {
+  margin-top: 10px;
+}
+
+#container {
+  text-align: center;
+  margin-top: 230px;
+  border: 0px;
+}
+
+#videoElement {
+  width: 500px;
+  height: 375px;
+  background-color: #000;
+  border-radius: 5px;
+}
+
+.time {
+  text-align: center;
+  margin-top: -30px;
+  color: #ffffff;
+  visibility: hidden;
+}
+
+.btn {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.drive-timer_startBtn {
+  margin-right: 10px;
+  -webkit-border-radius: 60;
+  -moz-border-radius: 60;
+  border-radius: 60px;
+  -webkit-box-shadow: 1px 1px 2px #b8b8b8;
+  -moz-box-shadow: 1px 1px 2px #b8b8b8;
+  box-shadow: 1px 1px 2px #b8b8b8;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 15px;
+  background: #ff9d5c;
+  padding: 10px 40px 10px 40px;
+  text-decoration: none;
+  border: 0px;
+}
+
+.drive-timer_startBtn:hover {
+  background: #ffbd92;
+  text-decoration: none;
+}
+
+.drive-timer_stopBtn {
+  margin-left: 10px;
+  -webkit-border-radius: 60;
+  -moz-border-radius: 60;
+  border-radius: 60px;
+  -webkit-box-shadow: 1px 1px 2px #b8b8b8;
+  -moz-box-shadow: 1px 1px 2px #b8b8b8;
+  box-shadow: 1px 1px 2px #b8b8b8;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 15px;
+  background: #ff9d5c;
+  padding: 10px 40px 10px 40px;
+  text-decoration: none;
+  border: 0px;
+}
+
+.drive-timer_stopBtn:hover {
+  background: #ffbd92;
+  text-decoration: none;
+}
+
+/*.hide {
+        display: none;
+      } 타이머 숨기기 기능*/ ;
