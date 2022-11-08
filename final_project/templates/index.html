@@ -93,6 +93,7 @@
       let cron;
 
       function startButton() {
+        start_video();
         updateTimer();
         stopButton();
         cron = setInterval(updateTimer, 1000);

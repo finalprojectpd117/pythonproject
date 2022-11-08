@@ -3,8 +3,8 @@ from django.views.decorators import gzip
 from django.http import StreamingHttpResponse
 import cv2
 import threading
+import time
 import mediapipe as mp
-import numpy as np
 
 
 lipsUpperOuter = [61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291]
@@ -77,6 +77,9 @@ def home(request):
     return render(request, 'index.html')
 
 
+prevtime = 0
+
+
 class VideoCamera(object):
     def __init__(self):
         self.video = cv2.VideoCapture(0)
@@ -118,9 +121,14 @@ class VideoCamera(object):
                 (self.grabbed, self.frame) = self.video.read()
                 self.frame = cv2.flip(self.frame, 1)
                 self.results = face_mesh.process(self.frame)
+                self.curtime = time.time()
+                self.prevtime = self.curtime
+                self.sec = self.curtime - self.prevtime
+                self.fps = (self.sec) / 1
+                self.str1 = "FPS : %0.1f" % self.fps
 
                 self.frame.flags.writeable = True
-                self.frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2RGB)
+                self.frame = cv2.cvtColor(self.frame, cv2.COLOR_RGB2BGR)
                 if self.results.multi_face_landmarks:
                     for face_landmarks in self.results.multi_face_landmarks:
                         self.mp_drawing.draw_landmarks(
@@ -171,37 +179,216 @@ class VideoCamera(object):
 
                     return (min_x, min_y), (max_x, max_y)
 
-        # extract face min max
+                ftr = 0
+                ftl = 0
+                yasl = 0
+                yasr = 0
+                yay = 0
+                yaa = 0
+
+                # extract face min max
                 sil_min, sil_max = findMinMaxPos(silhouette)
                 #print('Face shil min({},{}), max({},{})'.format(sil_min[0], sil_min[1], sil_max[0], sil_max[1]))
+
                 r_eyeb_min, r_eyeb_max = findMinMaxPos(rightEyebrowUpper)
                 l_eyeb_min, l_eyeb_max = findMinMaxPos(leftEyebrowUpper)
                 r_eyeu_min, r_eyeu_max = findMinMaxPos(leftEyeUpper0)
                 l_eyeu_min, l_eyeu_max = findMinMaxPos(rightEyeUpper0)
 
+                r_eyeu0_min, r_eyeu0_max = findMinMaxPos(
+                    rightEyeUpper0)  # 159 #r_eyeu0_max
+                l_eyel0_min, l_eyel0_max = findMinMaxPos(
+                    leftEyeLower0)  # 374 # l_eyel0_min
+
+                l_eyeu0_min, l_eyeu0_max = findMinMaxPos(
+                    leftEyeUpper0)  # 386 # l_eyeu0_max
+                r_eyel0_min, r_eyel0_max = findMinMaxPos(
+                    rightEyeLower0)  # 145 # r_eyel0_min
+
                 lips_upi_min, lips_upi_max = findMinMaxPos(
                     lipsUpperInner)  # 13
                 # 최소값 x[0],y[1] / 최대값 x[0],y[1]
                 # turn right
-                mm = self.results.multi_face_landmarks[0].landmark[13].y
-                l270 = self.results.multi_face_landmarks[0].landmark[270].y
-                r40 = self.results.multi_face_landmarks[0].landmark[40].y
+                mark14 = self.results.multi_face_landmarks[0].landmark[14].y
+                mark204 = self.results.multi_face_landmarks[0].landmark[204].y
+                mark424 = self.results.multi_face_landmarks[0].landmark[424].y
+
+                mark4 = self.results.multi_face_landmarks[0].landmark[4].y
+                mark266 = self.results.multi_face_landmarks[0].landmark[266].y
+                mark36 = self.results.multi_face_landmarks[0].landmark[36].y
+
+                mark145 = self.results.multi_face_landmarks[0].landmark[145].y
+                mark443 = self.results.multi_face_landmarks[0].landmark[443].y
+
+                mark374 = self.results.multi_face_landmarks[0].landmark[374].y
+                mark223 = self.results.multi_face_landmarks[0].landmark[223].y
+
+                str1 = ""
+                # cv2.putText(image, str1, (100,400), cv2.FONT_ITALIC, 1, (0, 255, 0))
+                str2 = ""
+                # cv2.putText(image, "warning", (250,200), cv2.FONT_ITALIC, 1, (255, 0, 0))
+                # cv2.putText(image, "attention", (250,225), cv2.FONT_ITALIC, 1, (255, 255, 0))
+
+                if (sil_min[0] < r_eyeb_min[0]):
+                    ftr = 0
 
                 if (sil_min[0] > r_eyeb_min[0]):
-                    print('Face turn right!')
+                    # print('Face turn right!')
+                    str1 = "Face turn right!"
+                    ftr += 1
+                    print("ftr:"+str(ftr))
+                    cv2.putText(self.frame, str1, (100, 350),
+                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                    if (ftr >= 5):
+                        str2 = "attention"
+                    if (ftr > 10):
+                        str2 = ""
+                    if (ftr >= 15):
+                        str2 = "warning"
+                    if (str2 == "attention"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == ""):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == "warning"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
 
                 # turn left
+
+                if (sil_max[0] > l_eyeb_max[0]):
+                    ftl = 0
+
                 if (sil_max[0] < l_eyeb_max[0]):
-                    print('Face turn left!')
+                    # print('Face turn left!')
+                    str1 = "Face turn left!"
+                    ftl += 1
+                    print("ftl:"+str(ftl))
+                    cv2.putText(self.frame, str1, (100, 350),
+                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                    if (ftl >= 5):
+                        str2 = "attention"
+                    if (ftl > 10):
+                        str2 = ""
+                    if (ftl >= 15):
+                        str2 = "warning"
+                    if (str2 == "attention"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == ""):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == "warning"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
 
-                if (r_eyeu_max[1] > l_eyeu_max[1]):
-                    print('you are sleeping left')
+                if (mark145 >= mark443):
+                    yasl = 0
 
-                if (r_eyeu_max[1] < l_eyeu_max[1]):
-                    print('you are sleeping right')
+                # if(r_eyeu0_max[1] <l_eyel0_min[1]) :  #if (r_eyeu_max[1] > l_eyeu_max[1]):
+                if (mark145 < mark443):
+                    # print('you are sleeping left')
+                    str1 = "you are sleeping right"
+                    yasl += 1
+                    print("yasl:" + str(yasl))
+                    cv2.putText(self.frame, str1, (100, 400),
+                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                    if (yasl >= 5):
+                        str2 = "attention"
+                    if (yasl > 10):
+                        str2 = ""
+                    if (yasl >= 15):
+                        str2 = "warning"
+                    if (str2 == "attention"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == ""):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == "warning"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
 
-                if (mm <= l270 and mm <= r40):
-                    print('you are yawning')
+                if (mark374 >= mark223):
+                    yasr = 0
+
+                # if(l_eyeu0_max[1] < r_eyel0_min[1]):   #if (r_eyeu_max[1] < l_eyeu_max[1]):
+                if (mark374 < mark223):
+                    # print('you are sleeping right')
+                    str1 = "you are sleeping left"
+                    yasr += 1
+                    print("yasr:"+str(yasr))
+                    cv2.putText(self.frame, str1, (100, 400),
+                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                    if (yasr >= 5):
+                        str2 = "attention"
+                    if (yasr > 10):
+                        str2 = ""
+                    if (yasr >= 15):
+                        str2 = "warning"
+                    if (str2 == "attention"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == ""):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == "warning"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+
+                if (mark14 >= mark204 and mark14 >= mark424):
+                    yay = 0
+
+                # 하품하면   #if (mark13 <= mark436 and mark13 <= mark216):   #if (mark13 <= mark92 and mark13 <= mark322): #if (mark13 <= mark270 and mark13 <= mark40):
+                if (mark14 > mark204 and mark14 > mark424):
+                    # print('you are yawning')
+                    str1 = "you are yawning"
+                    yay += 1
+                    print("yay:"+str(yay))
+                    cv2.putText(self.frame, str1, (100, 400),
+                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                    if (yay >= 5):
+                        str2 = "attention"
+                    if (yay > 10):
+                        str2 = ""
+                    if (yay >= 15):
+                        str2 = "warning"
+                    if (str2 == "attention"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == ""):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == "warning"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+
+                if (mark4 <= mark266 or mark4 <= mark36):
+                    yaa = 0
+
+                if (mark4 > mark266 and mark4 > mark36):  # 고개를 숙이면
+                    # print('you are asleep')
+                    str1 = "you are asleep"
+                    yaa += 1
+                    print("yaa:"+str(yaa))
+                    cv2.putText(self.frame, str1, (100, 450),
+                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                    if (yaa >= 5):
+                        str2 = "attention"
+                    if (yaa > 10):
+                        str2 = ""
+                    if (yaa >= 15):
+                        str2 = "warning"
+                    if (str2 == "attention"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == ""):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                    if (str2 == "warning"):
+                        cv2.putText(self.frame, str2, (250, 200),
+                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
 
                 r_eye_ir_min, r_eye_ir_max = findMinMaxPos(rightEyeIris)
                 l_eye_ir_min, l_eye_ir_max = findMinMaxPos(leftEyeIris)
@@ -224,15 +411,15 @@ class VideoCamera(object):
                 r_eye_hgt = abs(r_eye_up_max[1] - r_eye_low_min[1])
                 l_eye_hgt = abs(l_eye_up_max[1] - l_eye_low_min[1])
 
-                # bilnk_left
-                if l_eye_hgt < l_ir_hgt * 0.1:
-                    # if l_eye_hgt < l_ir_hgt * 0.05:
-                    print('blink left eye!( {}, {})'.format(l_eye_hgt, l_ir_hgt))
+                # # bilnk_left
+                # if l_eye_hgt < l_ir_hgt * 0.1:
+                #     # if l_eye_hgt < l_ir_hgt * 0.05:
+                #     print('blink left eye!( {}, {})'.format(l_eye_hgt, l_ir_hgt))
 
-                # blink_right
-                if r_eye_hgt < r_ir_hgt * 0.1:
-                    # if r_eye_hgt < r_ir_hgt * 0.05:
-                    print('blink right eye!( {}, {})'.format(r_eye_hgt, r_ir_hgt))
+                # # blink_right
+                # if r_eye_hgt < r_ir_hgt * 0.1:
+                #     # if r_eye_hgt < r_ir_hgt * 0.05:
+                #     print('blink right eye!( {}, {})'.format(r_eye_hgt, r_ir_hgt))
 
 
 def gen(camera):
