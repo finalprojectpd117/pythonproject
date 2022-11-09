@@ -37,9 +37,9 @@
       "
     >
       <div style="margin-left: 250px">
-        운전자 <strong>{ID}</strong>님의 상태는
+        운전자님의 상태는
       </div>
-      <div style="margin-top: 15px"><strong>{정상}</strong>입니다.</div>
+      <div style="margin-top: 15px"><strong><span class="word">대기중</span></strong>입니다.</div>
     </div>
 
     <div style="text-align: center; margin-left: 400px; margin-top: -50px">
@@ -50,20 +50,22 @@
         height="79.43"
       />
     </div>
-
+    {% comment %} <div
+      class="time"
+      style="margin-top: 15px; margin-left: -610px; color: black; font-weight: bolder"
+    >
+      <span class="timer drive-timer" id="times">00:00:00</span>
+    </div> {% endcomment %}
     <div id="container">
       <img
-        style="margin-top: -200px"
+        style="margin-top: -210px"
         src="http://127.0.0.1:8000/facemesh"
         alt=""
         width="680"
         height="510"
       />
     </div>
-    <div class="time">
-      <span class="timer drive-timer" id="times">00:00:00</span>
-    </div>
-    <div class="btn">
+    <div class="btn"">
       <input
         class="drive-timer_startBtn"
         type="button"
@@ -93,6 +95,7 @@
       let cron;
 
       function startButton() {
+        changeByJS1()
         start_video();
         updateTimer();
         stopButton();
@@ -100,6 +103,7 @@
         timer.classList.add("hide");
       }
       function stopButton() {
+        changeByJS2()
         clearInterval(cron);
         timer.classList.remove("hide");
       }
@@ -137,6 +141,18 @@
           });
         });
       });
+
+      function changeByJS1() {
+        let x = document.getElementsByClassName("word")[0];
+        x.innerText="주행중"; 
+        {% comment %} x.style.color="red"; {% endcomment %}
+     }
+
+     function changeByJS2() {
+      let x = document.getElementsByClassName("word")[0];
+      x.innerText="대기중"; 
+      {% comment %} x.style.color="red"; {% endcomment %}
+   }
 
       function toggleBtn1() {
         // 토글 할 버튼 선택 (btn1)

@@ -129,29 +129,29 @@ class VideoCamera(object):
 
                 self.frame.flags.writeable = True
                 self.frame = cv2.cvtColor(self.frame, cv2.COLOR_RGB2BGR)
-                if self.results.multi_face_landmarks:
-                    for face_landmarks in self.results.multi_face_landmarks:
-                        self.mp_drawing.draw_landmarks(
-                            image=self.frame,
-                            landmark_list=face_landmarks,
-                            connections=self.mp_face_mesh.FACEMESH_TESSELATION,
-                            landmark_drawing_spec=None,
-                            connection_drawing_spec=self.mp_drawing_styles
-                            .get_default_face_mesh_tesselation_style())
-                        self.mp_drawing.draw_landmarks(
-                            image=self.frame,
-                            landmark_list=face_landmarks,
-                            connections=self.mp_face_mesh.FACEMESH_CONTOURS,
-                            landmark_drawing_spec=None,
-                            connection_drawing_spec=self.mp_drawing_styles
-                            .get_default_face_mesh_contours_style())
-                        self.mp_drawing.draw_landmarks(
-                            image=self.frame,
-                            landmark_list=face_landmarks,
-                            connections=self.mp_face_mesh.FACEMESH_IRISES,
-                            landmark_drawing_spec=None,
-                            connection_drawing_spec=self.mp_drawing_styles
-                            .get_default_face_mesh_iris_connections_style())
+                # if self.results.multi_face_landmarks:
+                #     for face_landmarks in self.results.multi_face_landmarks:
+                #         self.mp_drawing.draw_landmarks(
+                #             image=self.frame,
+                #             landmark_list=face_landmarks,
+                #             connections=self.mp_face_mesh.FACEMESH_TESSELATION,
+                #             landmark_drawing_spec=None,
+                #             connection_drawing_spec=self.mp_drawing_styles
+                #             .get_default_face_mesh_tesselation_style())
+                #         self.mp_drawing.draw_landmarks(
+                #             image=self.frame,
+                #             landmark_list=face_landmarks,
+                #             connections=self.mp_face_mesh.FACEMESH_CONTOURS,
+                #             landmark_drawing_spec=None,
+                #             connection_drawing_spec=self.mp_drawing_styles
+                #             .get_default_face_mesh_contours_style())
+                #         self.mp_drawing.draw_landmarks(
+                #             image=self.frame,
+                #             landmark_list=face_landmarks,
+                #             connections=self.mp_face_mesh.FACEMESH_IRISES,
+                #             landmark_drawing_spec=None,
+                #             connection_drawing_spec=self.mp_drawing_styles
+                #             .get_default_face_mesh_iris_connections_style())
 
                 def findMinMaxPos(face_part):
 
