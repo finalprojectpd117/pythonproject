@@ -83,9 +83,6 @@ prevtime = 0
 class VideoCamera(object):
     def __init__(self):
         self.video = cv2.VideoCapture(0)
-        self.mp_drawing = mp.solutions.drawing_utils
-        self.mp_drawing_styles = mp.solutions.drawing_styles
-        self.mp_face_mesh = mp.solutions.face_mesh
         self.drawing_spec = self.mp_drawing.DrawingSpec(
             thickness=1, circle_radius=1)
         (self.grabbed, self.frame) = self.video.read()
@@ -111,6 +108,14 @@ class VideoCamera(object):
         #     self.point = 30,30+(i*40)
         #     cv2.putText(self.img, 'PYTHON', self.point, fonts[i],1,white_color,2,cv2.LINE_AA)
 
+    ftr = 0
+    ftl = 0
+    yasl = 0
+    yasr = 0
+    yay = 0
+    yaa = 0
+
+
     def update(self):
         with self.mp_face_mesh.FaceMesh(
                 max_num_faces=1,
@@ -129,29 +134,7 @@ class VideoCamera(object):
 
                 self.frame.flags.writeable = True
                 self.frame = cv2.cvtColor(self.frame, cv2.COLOR_RGB2BGR)
-                # if self.results.multi_face_landmarks:
-                #     for face_landmarks in self.results.multi_face_landmarks:
-                #         self.mp_drawing.draw_landmarks(
-                #             image=self.frame,
-                #             landmark_list=face_landmarks,
-                #             connections=self.mp_face_mesh.FACEMESH_TESSELATION,
-                #             landmark_drawing_spec=None,
-                #             connection_drawing_spec=self.mp_drawing_styles
-                #             .get_default_face_mesh_tesselation_style())
-                #         self.mp_drawing.draw_landmarks(
-                #             image=self.frame,
-                #             landmark_list=face_landmarks,
-                #             connections=self.mp_face_mesh.FACEMESH_CONTOURS,
-                #             landmark_drawing_spec=None,
-                #             connection_drawing_spec=self.mp_drawing_styles
-                #             .get_default_face_mesh_contours_style())
-                #         self.mp_drawing.draw_landmarks(
-                #             image=self.frame,
-                #             landmark_list=face_landmarks,
-                #             connections=self.mp_face_mesh.FACEMESH_IRISES,
-                #             landmark_drawing_spec=None,
-                #             connection_drawing_spec=self.mp_drawing_styles
-                #             .get_default_face_mesh_iris_connections_style())
+                cv2.putText(self.frame, self.str1, (0,50), cv2.FONT_ITALIC, 1, (0, 255, 0))
 
                 def findMinMaxPos(face_part):
 
@@ -179,12 +162,9 @@ class VideoCamera(object):
 
                     return (min_x, min_y), (max_x, max_y)
 
-                ftr = 0
-                ftl = 0
-                yasl = 0
-                yasr = 0
-                yay = 0
-                yaa = 0
+
+
+
 
                 # extract face min max
                 sil_min, sil_max = findMinMaxPos(silhouette)
@@ -207,15 +187,15 @@ class VideoCamera(object):
 
                 lips_upi_min, lips_upi_max = findMinMaxPos(
                     lipsUpperInner)  # 13
-                # 최소값 x[0],y[1] / 최대값 x[0],y[1]
+                # 최소�?x[0],y[1] / 최�?�?x[0],y[1]
                 # turn right
-                mark14 = self.results.multi_face_landmarks[0].landmark[14].y
-                mark204 = self.results.multi_face_landmarks[0].landmark[204].y
-                mark424 = self.results.multi_face_landmarks[0].landmark[424].y
+                mark13 = self.results.multi_face_landmarks[0].landmark[13].y
+                mark92 = self.results.multi_face_landmarks[0].landmark[92].y
+                mark322 = self.results.multi_face_landmarks[0].landmark[322].y
 
                 mark4 = self.results.multi_face_landmarks[0].landmark[4].y
-                mark266 = self.results.multi_face_landmarks[0].landmark[266].y
-                mark36 = self.results.multi_face_landmarks[0].landmark[36].y
+                mark330 = self.results.multi_face_landmarks[0].landmark[330].y
+                mark101 = self.results.multi_face_landmarks[0].landmark[101].y
 
                 mark145 = self.results.multi_face_landmarks[0].landmark[145].y
                 mark443 = self.results.multi_face_landmarks[0].landmark[443].y
@@ -223,9 +203,9 @@ class VideoCamera(object):
                 mark374 = self.results.multi_face_landmarks[0].landmark[374].y
                 mark223 = self.results.multi_face_landmarks[0].landmark[223].y
 
-                str1 = ""
-                # cv2.putText(image, str1, (100,400), cv2.FONT_ITALIC, 1, (0, 255, 0))
                 str2 = ""
+                # cv2.putText(image, str1, (100,400), cv2.FONT_ITALIC, 1, (0, 255, 0))
+                str3 = ""
                 # cv2.putText(image, "warning", (250,200), cv2.FONT_ITALIC, 1, (255, 0, 0))
                 # cv2.putText(image, "attention", (250,225), cv2.FONT_ITALIC, 1, (255, 255, 0))
 
@@ -234,7 +214,7 @@ class VideoCamera(object):
 
                 if (sil_min[0] > r_eyeb_min[0]):
                     # print('Face turn right!')
-                    str1 = "Face turn right!"
+                    str1 = "Face turn left!"
                     ftr += 1
                     print("ftr:"+str(ftr))
                     cv2.putText(self.frame, str1, (100, 350),
@@ -246,14 +226,11 @@ class VideoCamera(object):
                     if (ftr >= 15):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200),cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200),cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 200),cv2.FONT_ITALIC, 1, (255, 0, 0))
 
                 # turn left
 
@@ -262,11 +239,10 @@ class VideoCamera(object):
 
                 if (sil_max[0] < l_eyeb_max[0]):
                     # print('Face turn left!')
-                    str1 = "Face turn left!"
+                    str1 = "Face turn right!"
                     ftl += 1
                     print("ftl:"+str(ftl))
-                    cv2.putText(self.frame, str1, (100, 350),
-                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                    cv2.putText(self.frame, str1, (100, 350), cv2.FONT_ITALIC, 1, (0, 255, 0))
                     if (ftl >= 5):
                         str2 = "attention"
                     if (ftl > 10):
@@ -274,14 +250,11 @@ class VideoCamera(object):
                     if (ftl >= 15):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 0, 0))
 
                 if (mark145 >= mark443):
                     yasl = 0
@@ -292,8 +265,7 @@ class VideoCamera(object):
                     str1 = "you are sleeping right"
                     yasl += 1
                     print("yasl:" + str(yasl))
-                    cv2.putText(self.frame, str1, (100, 400),
-                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                    cv2.putText(self.frame, str1, (100, 400), cv2.FONT_ITALIC, 1, (0, 255, 0))
                     if (yasl >= 5):
                         str2 = "attention"
                     if (yasl > 10):
@@ -301,14 +273,11 @@ class VideoCamera(object):
                     if (yasl >= 15):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 0, 0))
 
                 if (mark374 >= mark223):
                     yasr = 0
@@ -328,20 +297,17 @@ class VideoCamera(object):
                     if (yasr >= 15):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 0, 0))
 
-                if (mark14 >= mark204 and mark14 >= mark424):
+                if (mark13 >= mark92 and mark13 >= mark322):
                     yay = 0
 
-                # 하품하면   #if (mark13 <= mark436 and mark13 <= mark216):   #if (mark13 <= mark92 and mark13 <= mark322): #if (mark13 <= mark270 and mark13 <= mark40):
-                if (mark14 > mark204 and mark14 > mark424):
+                # ?�품?�면   #if (mark13 <= mark436 and mark13 <= mark216):   #if (mark13 <= mark92 and mark13 <= mark322): #if (mark13 <= mark270 and mark13 <= mark40):
+                if (mark13 < mark92 and mark13 < mark322):
                     # print('you are yawning')
                     str1 = "you are yawning"
                     yay += 1
@@ -355,20 +321,16 @@ class VideoCamera(object):
                     if (yay >= 15):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 0, 0))
 
-                if (mark4 <= mark266 or mark4 <= mark36):
+                if (mark4<=mark330 or mark4<=mark101):
                     yaa = 0
 
-                if (mark4 > mark266 and mark4 > mark36):  # 고개를 숙이면
-                    # print('you are asleep')
+                if (mark4<=mark330 or mark4<=mark101):  # 고개�??�이�?                    # print('you are asleep')
                     str1 = "you are asleep"
                     yaa += 1
                     print("yaa:"+str(yaa))
@@ -381,14 +343,11 @@ class VideoCamera(object):
                     if (yaa >= 15):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 255, 0))
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 200), cv2.FONT_ITALIC, 1, (255, 0, 0))
 
                 r_eye_ir_min, r_eye_ir_max = findMinMaxPos(rightEyeIris)
                 l_eye_ir_min, l_eye_ir_max = findMinMaxPos(leftEyeIris)
@@ -435,5 +394,5 @@ def facemesh(request):
         cam = VideoCamera()
         return StreamingHttpResponse(gen(cam), content_type="multipart/x-mixed-replace;boundary=frame")
     except:
-        print("에러입니다....")
+        print("?�러?�니??...")
         pass
