@@ -77,9 +77,6 @@ def home(request):
     return render(request, 'index.html')
 
 
-prevtime = 0
-
-
 class VideoCamera(object):
     def __init__(self):
         self.video = cv2.VideoCapture(0)
@@ -111,6 +108,15 @@ class VideoCamera(object):
         #     self.point = 30,30+(i*40)
         #     cv2.putText(self.img, 'PYTHON', self.point, fonts[i],1,white_color,2,cv2.LINE_AA)
 
+    ftr = 0
+    ftl = 0
+    yasl = 0
+    yasr = 0
+    yay = 0
+    yaa = 0
+
+    prevtime = 0
+
     def update(self):
         with self.mp_face_mesh.FaceMesh(
                 max_num_faces=1,
@@ -122,10 +128,12 @@ class VideoCamera(object):
                 self.frame = cv2.flip(self.frame, 1)
                 self.results = face_mesh.process(self.frame)
                 self.curtime = time.time()
-                self.prevtime = self.curtime
                 self.sec = self.curtime - self.prevtime
-                self.fps = (self.sec) / 1
+                self.prevtime = self.curtime
+                self.fps = 1 / (self.sec)
                 self.str1 = "FPS : %0.1f" % self.fps
+                self.frame = cv2.putText(
+                    self.frame, self.str1, (0, 50), cv2.FONT_ITALIC, 1, (0, 255, 0))
 
                 self.frame.flags.writeable = True
                 self.frame = cv2.cvtColor(self.frame, cv2.COLOR_RGB2BGR)
@@ -179,13 +187,6 @@ class VideoCamera(object):
 
                     return (min_x, min_y), (max_x, max_y)
 
-                ftr = 0
-                ftl = 0
-                yasl = 0
-                yasr = 0
-                yay = 0
-                yaa = 0
-
                 # extract face min max
                 sil_min, sil_max = findMinMaxPos(silhouette)
                 #print('Face shil min({},{}), max({},{})'.format(sil_min[0], sil_min[1], sil_max[0], sil_max[1]))
@@ -238,22 +239,19 @@ class VideoCamera(object):
                     ftr += 1
                     print("ftr:"+str(ftr))
                     cv2.putText(self.frame, str1, (100, 350),
-                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                                cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0), 3)
                     if (ftr >= 5):
                         str2 = "attention"
-                    if (ftr > 10):
-                        str2 = ""
-                    if (ftr >= 15):
+                    if (ftr > 20):
+                        str2 = "attention"
+                    if (ftr >= 50):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
-                    if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 0), 3)
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 3)
 
                 # turn left
 
@@ -266,22 +264,19 @@ class VideoCamera(object):
                     ftl += 1
                     print("ftl:"+str(ftl))
                     cv2.putText(self.frame, str1, (100, 350),
-                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                                cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0), 3)
                     if (ftl >= 5):
                         str2 = "attention"
-                    if (ftl > 10):
-                        str2 = ""
-                    if (ftl >= 15):
+                    if (ftl > 20):
+                        str2 = "attention"
+                    if (ftl >= 50):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
-                    if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 0), 3)
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 3)
 
                 if (mark145 >= mark443):
                     yasl = 0
@@ -293,22 +288,19 @@ class VideoCamera(object):
                     yasl += 1
                     print("yasl:" + str(yasl))
                     cv2.putText(self.frame, str1, (100, 400),
-                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                                cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0), 3)
                     if (yasl >= 5):
                         str2 = "attention"
-                    if (yasl > 10):
-                        str2 = ""
-                    if (yasl >= 15):
+                    if (yasl > 20):
+                        str2 = "attention"
+                    if (yasl >= 50):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
-                    if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 0), 3)
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 3)
 
                 if (mark374 >= mark223):
                     yasr = 0
@@ -320,22 +312,17 @@ class VideoCamera(object):
                     yasr += 1
                     print("yasr:"+str(yasr))
                     cv2.putText(self.frame, str1, (100, 400),
-                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                                cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0), 3)
                     if (yasr >= 5):
                         str2 = "attention"
-                    if (yasr > 10):
-                        str2 = ""
-                    if (yasr >= 15):
-                        str2 = "warning"
+                    if (yasr >= 50):
+                        str2 = "You need a break"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
-                    if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 0), 3)
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 3)
 
                 if (mark14 >= mark204 and mark14 >= mark424):
                     yay = 0
@@ -347,22 +334,19 @@ class VideoCamera(object):
                     yay += 1
                     print("yay:"+str(yay))
                     cv2.putText(self.frame, str1, (100, 400),
-                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                                cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0), 3)
                     if (yay >= 5):
                         str2 = "attention"
-                    if (yay > 10):
-                        str2 = ""
-                    if (yay >= 15):
-                        str2 = "warning"
+                    if (yay > 20):
+                        str2 = "attention"
+                    if (yay >= 50):
+                        str2 = "you need some rest"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
-                    if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 0), 3)
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 3)
 
                 if (mark4 <= mark266 or mark4 <= mark36):
                     yaa = 0
@@ -373,22 +357,19 @@ class VideoCamera(object):
                     yaa += 1
                     print("yaa:"+str(yaa))
                     cv2.putText(self.frame, str1, (100, 450),
-                                cv2.FONT_ITALIC, 1, (0, 255, 0))
+                                cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0), 3)
                     if (yaa >= 5):
                         str2 = "attention"
-                    if (yaa > 10):
-                        str2 = ""
-                    if (yaa >= 15):
+                    if (yaa > 20):
+                        str2 = "attention"
+                    if (yaa >= 50):
                         str2 = "warning"
                     if (str2 == "attention"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
-                    if (str2 == ""):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 255, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 0), 3)
                     if (str2 == "warning"):
-                        cv2.putText(self.frame, str2, (250, 200),
-                                    cv2.FONT_ITALIC, 1, (255, 0, 0))
+                        cv2.putText(self.frame, str2, (250, 250),
+                                    cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 3)
 
                 r_eye_ir_min, r_eye_ir_max = findMinMaxPos(rightEyeIris)
                 l_eye_ir_min, l_eye_ir_max = findMinMaxPos(leftEyeIris)
