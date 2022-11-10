@@ -316,7 +316,7 @@ class VideoCamera(object):
                     if (yasr >= 5):
                         str2 = "attention"
                     if (yasr >= 50):
-                        str2 = "You need a break"
+                        str2 = "warning"
                     if (str2 == "attention"):
                         cv2.putText(self.frame, str2, (250, 250),
                                     cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 0), 3)
