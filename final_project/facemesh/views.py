@@ -124,6 +124,8 @@ class VideoCamera(object):
                 min_detection_confidence=0.5,
                 min_tracking_confidence=0.5) as face_mesh:
             while True:
+                if cv2.waitKey(20) & 0xFF == 27:
+                    break
                 (self.grabbed, self.frame) = self.video.read()
                 self.frame = cv2.flip(self.frame, 1)
                 self.results = face_mesh.process(self.frame)
@@ -133,7 +135,7 @@ class VideoCamera(object):
                 self.fps = 1 / (self.sec)
                 self.str1 = "FPS : %0.1f" % self.fps
                 self.frame = cv2.putText(
-                    self.frame, self.str1, (0, 50), cv2.FONT_ITALIC, 1, (0, 255, 0))
+                    self.frame, self.str1, (0, 50), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 255, 0))
 
                 self.frame.flags.writeable = True
                 self.frame = cv2.cvtColor(self.frame, cv2.COLOR_RGB2BGR)
